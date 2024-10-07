@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnCryptor {
-    String text;
-    String key;
-    String decryptionkey;
+    private String text;
+    private String key;
+    private String decryptionkey;
+    private String encryptedText;
     public static EnCryptor getfreeinstance(String text, String key){
         return new EnCryptor(text,key);
     }
@@ -19,21 +20,17 @@ public class EnCryptor {
         this.key = key;
         this.text = text;
     }
-    private String encryptsync(){
-        int snum = get_snum();
+    public String encryptsync(){
         List<Character> output = new ArrayList<>();
         int length = text.length();
-
-
-    }
-    private int get_snum(){
-        int i = 0;
-        for(int a=0; a< text.length(); a++){
-            int unicodevalue = ((int) text.charAt(a));
-            i = i + unicodevalue;
+        for (int i = 0; i < length; i++){
+            output.add(((char) get_snum(text.charAt(i))));
         }
-        return i * 1000;
-
-
+        return Utils.convertListToString(output);
     }
+    private int get_snum(char cha){
+        int unicodevalue = ((int) cha);
+        return unicodevalue * 1187;
+    }
+
 }

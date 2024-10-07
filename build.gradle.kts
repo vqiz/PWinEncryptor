@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("java")
+    application
 }
 
 group = "org.vqiz"
@@ -57,12 +58,23 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Optional: Version in das JAR-Manifest einbetten
+
 tasks.withType<Jar> {
     manifest {
         attributes(
             "Implementation-Title" to project.name,
             "Implementation-Version" to newVersion
+        )
+    }
+}
+application {
+
+    mainClass.set("org.vqiz.Main")
+}
+tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to application.mainClass.get()
         )
     }
 }

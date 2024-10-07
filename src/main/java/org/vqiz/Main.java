@@ -2,20 +2,25 @@ package org.vqiz;
 
 import org.vqiz.api.EventManager;
 import org.vqiz.api.Example;
+import org.vqiz.cryptor.EnCryptor;
+import org.vqiz.cryptor.Utils;
 import org.vqiz.logging.LogColor;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 public class Main {
 
     private static Logger logger = Logger.getLogger(Main.class.getName());
     private static EventManager eventManager = EventManager.getfreeinstnace();
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
          printLargeText();
          eventManager.addEvent(new Example());
-         if(args.length < 2)printhelp();
+         if (args.length != 3){printhelp();return;};
          switch (args[0]){
-
+             case "-encryptsync":
+                 encryptsync(args[1], args[2]);
 
 
 
@@ -34,7 +39,20 @@ public class Main {
         System.out.println(LogColor.RESET + " ");
 
     }
+
+    public static void encryptsync(String text, String key) throws IOException {
+        String out = EnCryptor.getfreeinstance(text,key).encryptsync();
+        File file = new File("encsync.txt");
+        if (file.exists()){
+            file.delete();
+        }
+        file.createNewFile();
+        Utils.writeToFile(file.getPath(), out);
+        System.out.println(LogColor.GREEN +  "Dein Synchron Verschlüsselter Text wurde in die file encsync.txt geschrieben" + LogColor.RESET);
+
+    }
     public static void printLargeText() {
+        System.out.println(LogColor.RESET);
         String[] P = {
                 "PPPPPP ",
                 "P    P ",
