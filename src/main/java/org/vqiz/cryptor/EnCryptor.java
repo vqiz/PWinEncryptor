@@ -5,6 +5,10 @@
 
 package org.vqiz.cryptor;
 
+import org.vqiz.Main;
+import org.vqiz.api.EventManager;
+import org.vqiz.api.EventType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +25,18 @@ public class EnCryptor {
         this.text = text;
     }
     public String encryptsync(){
+        Main.eventManager.Trigger(EventType.PREENCRYPTION_EVENT);
         List<Character> output = new ArrayList<>();
         int length = text.length();
         for (int i = 0; i < length; i++){
-            output.add(((char) get_snum(text.charAt(i))));
+            output.add(((char) get_snum(text.charAt(i), key.charAt(i))));
         }
-        return Utils.convertListToString(output);
+        return Utils.getfreeinstance().convertListToString(output);
     }
-    private int get_snum(char cha){
+    private int get_snum(char cha, char keychar){
         int unicodevalue = ((int) cha);
-        return unicodevalue * 1187;
+        int keyvalue = ((int) keychar);
+        return unicodevalue * keyvalue * 1187;
     }
 
 }

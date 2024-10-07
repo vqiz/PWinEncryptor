@@ -2,6 +2,7 @@ package org.vqiz;
 
 import org.vqiz.api.EventManager;
 import org.vqiz.api.Example;
+import org.vqiz.cryptor.DeCryptor;
 import org.vqiz.cryptor.EnCryptor;
 import org.vqiz.cryptor.Utils;
 import org.vqiz.logging.LogColor;
@@ -12,18 +13,18 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    private static Logger logger = Logger.getLogger(Main.class.getName());
-    private static EventManager eventManager = EventManager.getfreeinstnace();
+    public static EventManager eventManager = EventManager.getfreeinstnace();
     public static void main(String[] args) throws IOException {
          printLargeText();
          eventManager.addEvent(new Example());
-         if (args.length != 3){printhelp();return;};
+         if (args.length < 2){printhelp();return;};
          switch (args[0]){
              case "-encryptsync":
                  encryptsync(args[1], args[2]);
-
-
-
+                 break;
+             case "-decryptsync":
+                 decryptsync(args[1]);
+                 break;
 
          }
 
@@ -33,13 +34,17 @@ public class Main {
     public static void printhelp(){
         System.out.println(LogColor.RED + "You Havent entered a command! ");
         System.out.println(LogColor.YELLOW + "-encrypt <Text> <Key> Verschlüsselt Text");
-        System.out.println(LogColor.YELLOW + "-decrypt <Text> <Key> Entschlüsselt Text ");
+        System.out.println(LogColor.YELLOW + "-decrypt <key> Entschlüsselt Text ");
         System.out.println(LogColor.YELLOW + "-encryptsync <Text> <Key> Verschlüsselt nur synchron");
         System.out.println(LogColor.YELLOW + "-decryptsync <Text> <Key> Entschlüsselt nur synchron");
         System.out.println(LogColor.RESET + " ");
 
     }
-
+    public static void decryptsync(String key){
+        String enctext = Utils.getfreeinstance().readFromFile(new File("encsync.txt").getPath());
+        String out = DeCryptor.getFreeInstance(enctext, key).decryptSync();
+        System.out.println(LogColor.GREEN + "Der text lautet: " + out);
+    }
     public static void encryptsync(String text, String key) throws IOException {
         String out = EnCryptor.getfreeinstance(text,key).encryptsync();
         File file = new File("encsync.txt");
@@ -47,7 +52,7 @@ public class Main {
             file.delete();
         }
         file.createNewFile();
-        Utils.writeToFile(file.getPath(), out);
+        Utils.getfreeinstance().writeToFile(file.getPath(), out);
         System.out.println(LogColor.GREEN +  "Dein Synchron Verschlüsselter Text wurde in die file encsync.txt geschrieben" + LogColor.RESET);
 
     }

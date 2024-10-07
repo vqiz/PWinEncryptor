@@ -7,6 +7,8 @@ package org.vqiz.cryptor;
 
 import org.vqiz.logging.LogColor;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,8 +17,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Utils {
-    public static Logger logger = Logger.getLogger(Utils.class.getName());
-    public static String convertListToString(List<Character> characterList) {
+    public static Utils getfreeinstance(){
+        return new Utils();
+    }
+    public Logger logger = Logger.getLogger(Utils.class.getName());
+    public  String convertListToString(List<Character> characterList) {
         StringBuilder stringBuilder = new StringBuilder();
 
 
@@ -27,7 +32,7 @@ public class Utils {
 
         return stringBuilder.toString();
     }
-    public static void writeToFile(String filePath, String content) {
+    public void writeToFile(String filePath, String content) {
         Path path = Paths.get(filePath);
 
         try {
@@ -35,5 +40,20 @@ public class Utils {
         } catch (IOException e) {
             logger.severe(LogColor.RED + "Error writing file content" + e.getMessage());
         }
+    }
+    public  String readFromFile(String filePath) {
+        StringBuilder content = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            logger.severe("Fehler beim Lesen der Datei: " + e.getMessage());
+        }
+
+        return content.toString();
     }
 }

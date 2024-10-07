@@ -12,7 +12,7 @@ public class EventManager {
     public static EventManager getfreeinstnace(){
         return new EventManager();
     }
-    private void Trigger(EventType eventType){
+    public void Trigger(EventType eventType){
         events.forEach(encryptionEvent -> {
             if (encryptionEvent.get_eventType().equals(eventType)){
                 encryptionEvent.task();

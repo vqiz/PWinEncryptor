@@ -7,4 +7,5 @@ package org.vqiz.api;
 
 public enum EventType {
     PREENCRYPTION_EVENT,
+    POSTENCRYPTION_EVENT
 }
