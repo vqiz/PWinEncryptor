@@ -1,6 +1,7 @@
 package org.vqiz;
 
 import org.vqiz.api.EventManager;
+import org.vqiz.api.Example;
 import org.vqiz.logging.LogColor;
 
 import java.util.logging.Logger;
@@ -11,7 +12,7 @@ public class Main {
     private static EventManager eventManager = EventManager.getfreeinstnace();
     public static void main(String[] args) {
          printLargeText();
-         eventManager.
+         eventManager.addEvent(new Example());
          if(args.length < 2)printhelp();
          switch (args[0]){
 
