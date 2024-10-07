@@ -28,8 +28,10 @@ public class DeCryptor {
         Main.eventManager.Trigger(EventType.POSTENCRYPTION_EVENT);
         List<Character> output = new ArrayList<>();
         int length = encryptedText.length();
+        System.out.println(encryptedText);
         for (int i = 0; i < length; i++) {
             output.add((char) getSNum(encryptedText.charAt(i), key.charAt(i)));
+            System.out.println((char) getSNum(encryptedText.charAt(i), key.charAt(i)));
         }
         return Utils.getfreeinstance().convertListToString(output);
     }
@@ -37,6 +39,6 @@ public class DeCryptor {
     private int getSNum(char encryptedChar, char keyChar) {
         int encryptedValue = (int) encryptedChar;
         int keyValue = (int) keyChar;
-        return encryptedValue / (keyValue * 1187);
+        return encryptedValue / (keyValue);
     }
 }

@@ -36,7 +36,7 @@ public class EnCryptor {
     private int get_snum(char cha, char keychar){
         int unicodevalue = ((int) cha);
         int keyvalue = ((int) keychar);
-        return unicodevalue * keyvalue * 1187;
+        return unicodevalue * keyvalue;
     }
 
 }

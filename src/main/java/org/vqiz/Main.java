@@ -44,6 +44,7 @@ public class Main {
         String enctext = Utils.getfreeinstance().readFromFile(new File("encsync.txt").getPath());
         String out = DeCryptor.getFreeInstance(enctext, key).decryptSync();
         System.out.println(LogColor.GREEN + "Der text lautet: " + out);
+        System.out.println(out);
     }
     public static void encryptsync(String text, String key) throws IOException {
         String out = EnCryptor.getfreeinstance(text,key).encryptsync();
