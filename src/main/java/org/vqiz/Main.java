@@ -2,6 +2,7 @@ package org.vqiz;
 
 import org.vqiz.api.EventManager;
 import org.vqiz.api.Example;
+import org.vqiz.cryptor.AsyncCryptor;
 import org.vqiz.cryptor.DeCryptor;
 import org.vqiz.cryptor.EnCryptor;
 import org.vqiz.cryptor.Utils;
@@ -9,11 +10,13 @@ import org.vqiz.logging.LogColor;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.logging.Logger;
 
 public class Main {
 
     public static EventManager eventManager = EventManager.getfreeinstnace();
+    public static AsyncCryptor asyncCryptor = new AsyncCryptor(2048);
     public static void main(String[] args) throws IOException {
          printLargeText();
          eventManager.addEvent(new Example());
@@ -25,7 +28,12 @@ public class Main {
              case "-decryptsync":
                  decryptsync(args[1]);
                  break;
-
+             case "-encrypt":
+                 encrypt(args[1]);
+                 break;
+             case "-decrypt":
+                 decrypt(args[1]);
+                 break;
          }
 
 
@@ -33,12 +41,20 @@ public class Main {
     }
     public static void printhelp(){
         System.out.println(LogColor.RED + "You Havent entered a command! ");
-        System.out.println(LogColor.YELLOW + "-encrypt <Text> <Key> Verschlüsselt Text");
-        System.out.println(LogColor.YELLOW + "-decrypt <key> Entschlüsselt Text ");
+        System.out.println(LogColor.YELLOW + "-encrypt <Text> Verschlüsselt Text");
+        System.out.println(LogColor.YELLOW + "-decrypt <Text> Entschlüsselt Text ");
         System.out.println(LogColor.YELLOW + "-encryptsync <Text> <Key> Verschlüsselt nur synchron");
-        System.out.println(LogColor.YELLOW + "-decryptsync <Text> <Key> Entschlüsselt nur synchron");
+        System.out.println(LogColor.YELLOW + "-decryptsync <key> Entschlüsselt nur synchron");
         System.out.println(LogColor.RESET + " ");
 
+    }
+    public static void encrypt(String text){
+        BigInteger out = asyncCryptor.encrypt(text);
+        System.out.println(LogColor.GREEN + "Deine Verschlüsselte Nachricht Lautet: " + out);
+    }
+    public static void decrypt(String text){
+        String out = asyncCryptor.decrypt(new BigInteger(text));
+        System.out.println(LogColor.GREEN + "Deine Entschlüsselte Nachricht Lautet: " + out);
     }
     public static void decryptsync(String key){
         String enctext = Utils.getfreeinstance().readFromFile(new File("encsync.txt").getPath());
