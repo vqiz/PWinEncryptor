@@ -3,21 +3,20 @@ package org.vqiz;
 import org.vqiz.api.EventManager;
 import org.vqiz.api.Example;
 import org.vqiz.cryptor.AsyncCryptor;
-import org.vqiz.cryptor.DeCryptor;
-import org.vqiz.cryptor.EnCryptor;
-import org.vqiz.cryptor.Utils;
+import org.vqiz.cryptor.SyncEncryption;
 import org.vqiz.logging.LogColor;
 
-import java.io.File;
-import java.io.IOException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
-import java.util.logging.Logger;
+import java.nio.charset.StandardCharsets;
 
 public class Main {
 
     public static EventManager eventManager = EventManager.getfreeinstnace();
     public static AsyncCryptor asyncCryptor = new AsyncCryptor(2048);
-    public static void main(String[] args) throws IOException {
+    public static SyncEncryption syncEncryption = new SyncEncryption();
+    public static void main(String[] args) throws Exception {
          printLargeText();
          eventManager.addEvent(new Example());
          if (args.length < 2){printhelp();return;};
@@ -26,7 +25,7 @@ public class Main {
                  encryptsync(args[1], args[2]);
                  break;
              case "-decryptsync":
-                 decryptsync(args[1]);
+                 decryptsync(args[2], args[1]);
                  break;
              case "-encrypt":
                  encrypt(args[1]);
@@ -44,7 +43,7 @@ public class Main {
         System.out.println(LogColor.YELLOW + "-encrypt <Text> Verschlüsselt Text");
         System.out.println(LogColor.YELLOW + "-decrypt <Text> Entschlüsselt Text ");
         System.out.println(LogColor.YELLOW + "-encryptsync <Text> <Key> Verschlüsselt nur synchron");
-        System.out.println(LogColor.YELLOW + "-decryptsync <key> Entschlüsselt nur synchron");
+        System.out.println(LogColor.YELLOW + "-decryptsync <Text> <key> Entschlüsselt nur synchron");
         System.out.println(LogColor.RESET + " ");
 
     }
@@ -56,22 +55,23 @@ public class Main {
         String out = asyncCryptor.decrypt(new BigInteger(text));
         System.out.println(LogColor.GREEN + "Deine Entschlüsselte Nachricht Lautet: " + out);
     }
-    public static void decryptsync(String key){
-        String enctext = Utils.getfreeinstance().readFromFile(new File("encsync.txt").getPath());
-        String out = DeCryptor.getFreeInstance(enctext, key).decryptSync();
-        System.out.println(LogColor.GREEN + "Der text lautet: " + out);
+    public static void decryptsync(String key, String text) throws Exception {
+        String out = syncEncryption.decrypt(text, stringToSecretKey(key));
+        System.out.println(LogColor.GREEN + "Der text lautet: " + out + LogColor.RESET);
         System.out.println(out);
     }
-    public static void encryptsync(String text, String key) throws IOException {
-        String out = EnCryptor.getfreeinstance(text,key).encryptsync();
-        File file = new File("encsync.txt");
-        if (file.exists()){
-            file.delete();
-        }
-        file.createNewFile();
-        Utils.getfreeinstance().writeToFile(file.getPath(), out);
-        System.out.println(LogColor.GREEN +  "Dein Synchron Verschlüsselter Text wurde in die file encsync.txt geschrieben" + LogColor.RESET);
+    public static void encryptsync(String text, String key) throws Exception {
+        System.out.println(LogColor.GREEN + "Start encryption");
+        String out = syncEncryption.encrypt(text, stringToSecretKey(key));
+        System.out.println(LogColor.GREEN +  "Dein verschlüsselter text lautet " + out + LogColor.RESET);
 
+    }
+    public static SecretKey stringToSecretKey(String keyString) {
+        byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 16) {
+            throw new IllegalArgumentException("Key must be at least 16 bytes long for AES.");
+        }
+        return new SecretKeySpec(keyBytes, 0, 16, "AES");
     }
     public static void printLargeText() {
         System.out.println(LogColor.RESET);
