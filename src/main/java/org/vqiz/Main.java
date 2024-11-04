@@ -6,16 +6,30 @@ import org.vqiz.cryptor.AsyncCryptor;
 import org.vqiz.cryptor.SyncEncryption;
 import org.vqiz.logging.LogColor;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.math.BigInteger;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.*;
 
 public class Main {
 
     public static EventManager eventManager = EventManager.getfreeinstnace();
-    public static AsyncCryptor asyncCryptor = new AsyncCryptor(2048);
     public static SyncEncryption syncEncryption = new SyncEncryption();
+    public static AsyncCryptor cryptor;
+
+    static {
+        try {
+            cryptor = new AsyncCryptor();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
          printLargeText();
          eventManager.addEvent(new Example());
@@ -31,7 +45,7 @@ public class Main {
                  encrypt(args[1]);
                  break;
              case "-decrypt":
-                 decrypt(args[1]);
+                 decrypt(args[1], args[2]);
                  break;
          }
 
@@ -47,18 +61,15 @@ public class Main {
         System.out.println(LogColor.RESET + " ");
 
     }
-    public static void encrypt(String text){
-        BigInteger out = asyncCryptor.encrypt(text);
-        System.out.println(LogColor.GREEN + "Deine Verschlüsselte Nachricht Lautet: " + out);
+    public static void encrypt(String text) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        System.out.println("Encryptet message " + cryptor.encrypt(text));
     }
-    public static void decrypt(String text){
-        String out = asyncCryptor.decrypt(new BigInteger(text));
-        System.out.println(LogColor.GREEN + "Deine Entschlüsselte Nachricht Lautet: " + out);
+    public static void decrypt(String text, String key) throws Exception {
+        System.out.println("decryptet message " + cryptor.d(text, key));
     }
     public static void decryptsync(String key, String text) throws Exception {
         String out = syncEncryption.decrypt(text, stringToSecretKey(key));
         System.out.println(LogColor.GREEN + "Der text lautet: " + out + LogColor.RESET);
-        System.out.println(out);
     }
     public static void encryptsync(String text, String key) throws Exception {
         System.out.println(LogColor.GREEN + "Start encryption");
