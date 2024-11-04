@@ -38,7 +38,7 @@ public class AsyncCryptor {
         return encryptedMessageBase64 + " key : " + privateKeyToString(privateKey);
     }
 
-    public String d(String text, String key) throws Exception {
+    public String decrypt(String text, String key) throws Exception {
         Cipher decryptCipher = Cipher.getInstance("RSA");
         decryptCipher.init(Cipher.DECRYPT_MODE, stringToPrivateKey(key));
         byte[] decryptedMessage = decryptCipher.doFinal(Base64.getDecoder().decode(text.getBytes()));
@@ -46,17 +46,16 @@ public class AsyncCryptor {
         return decryptedMessageString;
     }
 
-    // Convert PublicKey to String
+
     public static String publicKeyToString(PublicKey publicKey) {
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());
     }
 
-    // Convert PrivateKey to String
+
     public static String privateKeyToString(PrivateKey privateKey) {
         return Base64.getEncoder().encodeToString(privateKey.getEncoded());
     }
 
-    // Convert String to PublicKey
     public static PublicKey stringToPublicKey(String key) throws Exception {
         byte[] byteKey = Base64.getDecoder().decode(key);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(byteKey);
@@ -64,7 +63,6 @@ public class AsyncCryptor {
         return keyFactory.generatePublic(spec);
     }
 
-    // Convert String to PrivateKey
     public static PrivateKey stringToPrivateKey(String key) throws Exception {
         byte[] byteKey = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(byteKey);

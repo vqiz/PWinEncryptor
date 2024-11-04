@@ -18,6 +18,6 @@ public class Example implements EncryptionEvent{
 
     @Override
     public EventType get_eventType() {
-        return EventType.PREENCRYPTION_EVENT;
+        return EventType.POSTENCRYPTIONSYNC_EVENT;
     }
 }

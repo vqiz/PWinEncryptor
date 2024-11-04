@@ -65,7 +65,7 @@ public class Main {
         System.out.println("Encryptet message " + cryptor.encrypt(text));
     }
     public static void decrypt(String text, String key) throws Exception {
-        System.out.println("decryptet message " + cryptor.d(text, key));
+        System.out.println("decryptet message " + cryptor.decrypt(text, key));
     }
     public static void decryptsync(String key, String text) throws Exception {
         String out = syncEncryption.decrypt(text, stringToSecretKey(key));
